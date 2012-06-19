@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="sql_create_tb_rss">        <![CDATA[
+      CREATE TABLE rss (
+		   _id INTEGER PRIMARY KEY AUTOINCREMENT,
+		   name TEXT NOT NULL UNIQUE,
+		   uid TEXT NOT NULL,
+		   type INTEGER NOT NULL DEFAULT 1
+		);]]>
+    </string>
+
+    <string-array name="sql_insert_rss">
+        <item>            <![CDATA[INSERT INTO rss (name, uid, type) VALUES (\'your name\', \'www.yourblog.org\', 1);]]>
+        </item>
+    </string-array>
+
+    <string name="sql_create_tb_favorites">        <![CDATA[
+        CREATE TABLE favorites (
+			   _id INTEGER PRIMARY KEY AUTOINCREMENT,
+			   content TEXT NOT NULL,
+			   pub_date INTEGER NOT NULL,
+			   link TEXT NOT NULL,
+			   rss_id INTEGER NOT NULL REFERENCES rss(_id)
+			);
+        ]]>
+    </string>
+    <string name="sql_create_tb_favorites_fast">        <![CDATA[
+        CREATE TABLE favorites_fast (
+				rss_id INTEGER NOT NULL REFERENCES rss(_id),
+			   pub_date INTEGER NOT NULL REFERENCES favorites(pub_date)
+			);
+        ]]>
+    </string>
+
+</resources>

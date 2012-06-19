@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="act_favorites">MAD3 Mobile - Favoritos</string>
+    <string name="err_access">Erro de acesso!</string>
+    <string name="err_feed_access_msg">Erro ao acessar feed.</string>
+    <string name="btn_back">Voltar</string>
+    <string name="msg_now_loading">Carregando…</string>
+    <string name="warning">Aviso</string>
+    <string name="err_page_not_found">Página não encontrada.</string>
+    <string name="menu_about">Sobre</string>
+    <string name="menu_help">Ajuda</string>
+    <string name="menu_favorites">Ver favoritos</string>
+    <string name="err_network_access">Erro ao acessar a internet. Verifique sua conexão de rede.</string>
+    <string name="warn_no_url">Nenhuma URL encontrada.</string>
+    <string name="err_unknow_rss">RSS desconhecido.</string>
+    <string-array name="post_list_options">
+        <item>Visualizar</item>
+        <item>Procurar por URL</item>
+        <item>Adicionar aos favoritos</item>
+    </string-array>
+    <string name="msg_options">Opções</string>
+    <string name="msg_links">Endereços</string>
+    <string name="msg_opening_url">Abrindo %1$s</string>
+    <string name="msg_favorites_empty">
+        Você não possui favoritos ainda.\n\nPara adicionar favoritos apenas pressione um post
+        ou um tweet e selecione Adicionar aos favoritos.
+    </string>
+</resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MAD3 Muxie</string>
+    <string name="app_img">Muxie</string>
+    <string name="act_favorites">MAD3 Mobile - Favorites</string>
+    <string name="err_access">Access error!</string>
+    <string name="err_feed_access_msg">Error while accessing feed.</string>
+    <string name="btn_back">Back</string>
+    <string name="msg_now_loading">Now loading…</string>
+    <string name="warning">Warning</string>
+    <string name="err_page_not_found">Page not found.</string>
+    <string name="menu_about">About</string>
+    <string name="menu_help">Help</string>
+    <string name="menu_favorites">View Favorites</string>
+    <string name="err_network_access">Error while accessing the internet. Check your network connection.</string>
+    <string name="warn_no_url">No URL was found.</string>
+    <string name="err_unknow_rss">Unknow RSS.</string>
+    <string-array name="post_list_options">
+        <item>View</item>
+        <item>Scan for URL</item>
+        <item>Add to favorites</item>
+    </string-array>
+    <string name="msg_options">Options</string>
+    <string name="msg_links">Links</string>
+    <string name="msg_opening_url">Opening %1$s</string>
+    <string name="msg_favorites_empty">
+        You don\'t have favorites yet.\n\nTo add favorites just press a post or a tweet and select
+    	Add to favorites.
+    </string>
+
+</resources>
