@@ -95,6 +95,9 @@ public class MadActivity extends FullActivity {
 			case 3:
 				ivAvatar.setImageResource(R.drawable.ic_launcher_facebook);
 				break;
+			case 4:
+				ivAvatar.setImageResource(R.drawable.ic_launcher_wordpress);
+				break;
 			}
     	}
     }

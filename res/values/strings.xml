@@ -3,7 +3,7 @@
 
     <string name="app_name">MAD3 Muxie</string>
     <string name="app_img">Muxie</string>
-    <string name="act_favorites">MAD3 Mobile - Favorites</string>
+    <string name="act_favorites">MAD3 Muxie - Favorites</string>
     <string name="err_access">Access error!</string>
     <string name="err_feed_access_msg">Error while accessing feed.</string>
     <string name="btn_back">Back</string>

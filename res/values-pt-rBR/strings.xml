@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="act_favorites">MAD3 Mobile - Favoritos</string>
+    <string name="act_favorites">MAD3 Muxie - Favoritos</string>
     <string name="err_access">Erro de acesso!</string>
     <string name="err_feed_access_msg">Erro ao acessar feed.</string>
     <string name="btn_back">Voltar</string>

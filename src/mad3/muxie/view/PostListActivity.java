@@ -9,6 +9,7 @@ import mad3.muxie.feed.RSSBlogger;
 import mad3.muxie.feed.RSSFacebook;
 import mad3.muxie.feed.RSSTwitter;
 import mad3.muxie.feed.RSSType;
+import mad3.muxie.feed.RSSWordpress;
 import mad3.muxie.table.TableRss;
 import mad3.muxie.twitter.ParseTweet;
 
@@ -48,7 +49,7 @@ import fidias.view.FullActivity;
 
 public class PostListActivity extends FullActivity {
 
-	public static final String _ID = "mad3.mobile.rss._ID";
+	public static final String _ID = "mad3.muxie.rss._ID";
 	private String id = null;
 	
 	private String uid = null, title = null;
@@ -95,14 +96,17 @@ public class PostListActivity extends FullActivity {
 			uid = rssCursor.getString(rssCursor.getColumnIndex(TableRss.UID));
 			
 			switch (type) {
-			case 1:
+			case RSSType.blogger:
 				tvTitle.setBackgroundResource(R.drawable.blogger_header);
 				break;
-			case 2:
+			case RSSType.twitter:
 				tvTitle.setBackgroundResource(R.drawable.twitter_header);
 				break;
-			case 3:
+			case RSSType.facebook:
 				tvTitle.setBackgroundResource(R.drawable.facebook_header);
+				break;
+			case RSSType.wordpress:
+				tvTitle.setBackgroundResource(R.drawable.wordpress_header);
 				break;
 			}
 			rssCursor.close();
@@ -171,23 +175,6 @@ public class PostListActivity extends FullActivity {
 						}
 					}
 				});
-				/*dialog.setOnItemSelectedListener(new OnItemSelectedListener() {
-					@Override
-					public void onItemSelected(AdapterView<?> arg0, View arg1,
-							int arg2, long arg3) {
-						Log.i("PostList", "long click restart reload.");
-						stopReload = false;
-						show("long click restart reload.");
-					}
-
-					@Override
-					public void onNothingSelected(AdapterView<?> arg0) {
-						Log.i("PostList", "long click restart reload.");
-						stopReload = false;
-						show("long click restart reload.");
-					}
-				});
-				stopReload = true;*/
 				dialog.show();
 				return true;
 			}
@@ -236,21 +223,6 @@ public class PostListActivity extends FullActivity {
 					openUrl(url);
 				}
 			});
-			/*dialog.setOnItemSelectedListener(new OnItemSelectedListener() {
-				@Override
-				public void onItemSelected(AdapterView<?> arg0, View arg1,
-						int arg2, long arg3) {
-					Log.i("PostList", "links restart reload.");
-					stopReload = false;
-				}
-
-				@Override
-				public void onNothingSelected(AdapterView<?> arg0) {
-					Log.i("PostList", "links restart reload.");
-					stopReload = false;
-				}
-			});
-			stopReload = true;*/
 			dialog.show();
 		}
 	}
@@ -272,6 +244,9 @@ public class PostListActivity extends FullActivity {
 		case RSSType.facebook:
 			content = Html.fromHtml(item.getDescription()).toString();
 			break;
+		case RSSType.wordpress:
+			content = item.getTitle();
+			break;
 		}
 		values.put("content", content);
 		createOrUpdate(values);
@@ -286,15 +261,18 @@ public class PostListActivity extends FullActivity {
 		RSS rss = null;
 		try {
 			switch (type) {
-			case 1:
+			case RSSType.blogger:
 				// comentatios: http://www.mad3linux.org/feeds/4278447403727088782/comments/default?alt=rss
 				rss = new RSSBlogger();
 				break;
-			case 2:
+			case RSSType.twitter:
 				rss = new RSSTwitter();
 				break;
-			case 3:
+			case RSSType.facebook:
 				rss = new RSSFacebook();
+				break;
+			case RSSType.wordpress:
+				rss = new RSSWordpress();
 				break;
 			default:
 				hasErrors = true;
@@ -312,6 +290,7 @@ public class PostListActivity extends FullActivity {
 			hasErrors = true;
 			error = e;
 		} catch (Exception e) {
+			Log.e("PostListActivity", e.getMessage(), e);
 			hasErrors = true;
 			error = new Exception(getResources().getString(R.string.err_network_access));
 		}
@@ -321,22 +300,21 @@ public class PostListActivity extends FullActivity {
 		if (validate(null)) {
 			tvTitle.setText(title);
 			switch (type) {
-			case 1:
+			case RSSType.blogger:
 				adapter = new BasePostListAdapter(this, RSSType.blogger);
-				adapter.notifyDataSetChanged();
-				lvList.setAdapter(adapter);
 				break;
-			case 2:
+			case RSSType.twitter:
 				adapter = new TwitterPostListAdapter(this);
-				adapter.notifyDataSetChanged();
-				lvList.setAdapter(adapter);
 				break;
-			case 3:
+			case RSSType.facebook:
 				adapter = new BasePostListAdapter(this, RSSType.facebook);
-				adapter.notifyDataSetChanged();
-				lvList.setAdapter(adapter);
+				break;
+			case RSSType.wordpress:
+				adapter = new BasePostListAdapter(this, RSSType.wordpress);
 				break;
 			}
+			adapter.notifyDataSetChanged();
+			lvList.setAdapter(adapter);
 			// reload the rss
 			handler.postDelayed(reload, THREAD_DELAY);
 		}
@@ -403,6 +381,9 @@ public class PostListActivity extends FullActivity {
 				break;
 			case RSSType.facebook:
 				holder.tvBaseTitle.setText(Html.fromHtml(item.getDescription()));
+				break;
+			case RSSType.wordpress:
+				holder.tvBaseTitle.setText(item.getTitle());
 				break;
 			}
 	    	holder.tvBaseTimestamp.setText(
@@ -589,24 +570,6 @@ public class PostListActivity extends FullActivity {
 			}
 		}
 	};
-	
-	// TODO: http://twigstechtips.blogspot.com.br/2011/11/for-my-app-moustachify-everything-i-was.html
-	/*protected void onSaveInstanceState(Bundle outState) {
-		try {
-			dismissDialog(ProgressDialog.STYLE_SPINNER);
-		} catch (Exception e) {
-			Log.e("PostListActivity", "Error while dismissing progress dialog", e);
-		}
-		super.onSaveInstanceState(outState);
-	}*/
-	
-	/*public void onBackPressed() {
-		if (dialog != null) {
-			Log.i("PostList", "dismissing dialog and finishing...");
-			dialog.dismiss();
-		}
-		super.onBackPressed();
-	}*/
 	
 	@Override
 	protected void onResume() {

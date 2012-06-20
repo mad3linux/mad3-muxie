@@ -3,6 +3,7 @@ package mad3.muxie.view;
 import java.sql.Date;
 
 import mad3.muxie.app.R;
+import mad3.muxie.feed.RSSType;
 import mad3.muxie.table.TableFavorites;
 import mad3.muxie.table.TableRss;
 import android.content.ContentValues;
@@ -95,17 +96,21 @@ public class FavoritesActivity extends FullActivity {
 			tvContent.setText(c.getString(c.getColumnIndex(TableFavorites.CONTENT)));
 			int type = c.getInt(c.getColumnIndex(TableRss.TYPE));
 			switch (type) {
-			case 1:
+			case RSSType.blogger:
 				tvType.setBackgroundResource(R.drawable.blogger_header);
 				tvType.setText("   blogger   ");
 				break;
-			case 2:
+			case RSSType.twitter:
 				tvType.setBackgroundResource(R.drawable.twitter_header);
 				tvType.setText("   twitter    ");
 				break;
-			case 3:
+			case RSSType.facebook:
 				tvType.setBackgroundResource(R.drawable.facebook_header);
 				tvType.setText(" facebook ");
+				break;
+			case RSSType.wordpress:
+				tvType.setBackgroundResource(R.drawable.wordpress_header);
+				tvType.setText(" wordpress ");
 				break;
 			}
 			Date date = new Date(c.getLong(c.getColumnIndex(TableFavorites.PUB_DATE)));
@@ -138,19 +143,15 @@ public class FavoritesActivity extends FullActivity {
 	
 	@Override
 	public void createOrUpdate(ContentValues values) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public boolean delete(String id) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean validate(ContentValues values) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
