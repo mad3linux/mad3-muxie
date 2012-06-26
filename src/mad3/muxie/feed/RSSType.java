@@ -2,8 +2,6 @@ package mad3.muxie.feed;
 
 public interface RSSType {
 
-	int blogger = 1;
-	int twitter = 2;
-	int facebook = 3;
-	int wordpress = 4;
+	int blogger = 1, twitter = 2, facebook = 3,
+			wordpress = 4, identica = 5, custom = 99;
 }

@@ -1,13 +1,17 @@
 package mad3.muxie.view;
 
 import java.sql.Date;
+import java.util.List;
 
 import mad3.muxie.app.R;
 import mad3.muxie.feed.RSSType;
 import mad3.muxie.table.TableFavorites;
 import mad3.muxie.table.TableRss;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,11 +21,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import fidias.model.Helper;
 import fidias.util.DateTimeUtils;
+import fidias.util.UrlUtils;
 import fidias.view.FullActivity;
 import fidias.view.Holder;
 
@@ -62,12 +69,84 @@ public class FavoritesActivity extends FullActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
-				model.moveToPosition(position);
-				String link = model.getString(model.getColumnIndex(TableFavorites.LINK));
-				show(getResources().getString(R.string.msg_opening_url, link));
-				openUrl(link);
+				view(position);
 			}
 		});
+		
+		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					final int position, long id) {
+				AlertDialog.Builder dialog = new AlertDialog.Builder(FavoritesActivity.this);
+				dialog.setTitle(R.string.msg_options);
+				dialog.setItems(R.array.favorites_options, new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case 0:
+							view(position);
+							break;
+						case 1:
+							scanForUrl(position);
+							break;
+						}
+					}
+				});
+				dialog.show();
+				return true;
+			}
+		});
+	}
+	
+	private void view(int position) {
+		model.moveToPosition(position);
+		String link = model.getString(model.getColumnIndex(TableFavorites.LINK));
+		show(getResources().getString(R.string.msg_opening_url, link));
+		openUrl(link);
+	}
+	
+	private void scanForUrl(int position) {
+		model.moveToPosition(position);
+		String content = model.getString(model.getColumnIndex(TableFavorites.CONTENT));
+		final List<String> urls = UrlUtils.extractUrl(content);
+		
+		int size = urls.size();
+		// Workaround for remove unwanted url
+		for (int i = 0; i < size; i++) {
+			String s = urls.get(i);
+			if (s.endsWith("</a")) {
+				urls.remove(i);
+				size--;
+			}
+		}
+		// Workaround
+		
+		if (size == 0) {
+			String s = getResources().getString(R.string.warn_no_url);
+			show(s);
+		} else if (size == 1) {
+			String url = urls.get(0);
+			show(getResources().getString(R.string.msg_opening_url, url));
+			openUrl(url);
+		} else {
+			AlertDialog.Builder dialog = new AlertDialog.Builder(FavoritesActivity.this);
+			ArrayAdapter<String> adapter = 
+					new ArrayAdapter<String>(this, R.layout.simple_list_item_url, urls);
+			
+			dialog.setTitle(R.string.msg_links);
+			dialog.setAdapter(adapter, new OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					String url = urls.get(which);
+					show(getResources().getString(R.string.msg_opening_url, url));
+					openUrl(url);
+				}
+			});
+			dialog.show();
+		}
 	}
 	
 	private Cursor listAll() {
@@ -112,6 +191,14 @@ public class FavoritesActivity extends FullActivity {
 				tvType.setBackgroundResource(R.drawable.wordpress_header);
 				tvType.setText(" wordpress ");
 				break;
+			case RSSType.identica:
+				tvType.setBackgroundResource(R.drawable.identica_header);
+				tvType.setText("   identica   ");
+				break;
+			default:
+				tvType.setBackgroundResource(R.drawable.blogger_header);
+				tvType.setText("   custom   ");
+				break;
 			}
 			Date date = new Date(c.getLong(c.getColumnIndex(TableFavorites.PUB_DATE)));
 			tvTimestamp.setText(DateTimeUtils.formatDate(date, DateTimeUtils.DIASEMANA_DIA_MES_ANO));
@@ -138,7 +225,6 @@ public class FavoritesActivity extends FullActivity {
 			FavoritesHolder holder = (FavoritesHolder) view.getTag();
 			holder.populate(cursor);
 		}
-		
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 package mad3.muxie.app;
 
 import mad3.muxie.app.R;
+import mad3.muxie.feed.RSSType;
 import mad3.muxie.table.TableRss;
 import mad3.muxie.view.FavoritesActivity;
 import mad3.muxie.view.PostListActivity;
@@ -40,7 +41,6 @@ public class MadActivity extends FullActivity {
         helper = new Helper(this);
         load();
         set();
-        //Log.i("MAD", "locale: " + Locale.getDefault().getCountry());
     }
     
     @Override
@@ -59,10 +59,8 @@ public class MadActivity extends FullActivity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				model.moveToPosition(position);
-				/*HashMap<String, String> map = new HashMap<String, String>();
-				map.put(PostListActivity._ID, model.getString(model.getColumnIndex("_id")));
-				map.put(PostListActivity._TYPE, model.getString(model.getColumnIndex(TableRss.TYPE)));*/
-				go(PostListActivity.class, PostListActivity._ID, model.getString(model.getColumnIndex("_id")));
+				go(PostListActivity.class, PostListActivity._ID,
+						model.getString(model.getColumnIndex("_id")));
 			}
 		});
 	}
@@ -86,17 +84,23 @@ public class MadActivity extends FullActivity {
     		tvRssUid.setText(cursor.getString(cursor.getColumnIndex(TableRss.NAME)));
     		int avatar = cursor.getInt(cursor.getColumnIndex(TableRss.TYPE));
     		switch (avatar) {
-			case 1:
+			case RSSType.blogger:
 				ivAvatar.setImageResource(R.drawable.ic_launcher_blogger);
 				break;
-			case 2:
+			case RSSType.twitter:
 				ivAvatar.setImageResource(R.drawable.ic_launcher_twitter_bird);
 				break;
-			case 3:
+			case RSSType.facebook:
 				ivAvatar.setImageResource(R.drawable.ic_launcher_facebook);
 				break;
-			case 4:
+			case RSSType.wordpress:
 				ivAvatar.setImageResource(R.drawable.ic_launcher_wordpress);
+				break;
+			case RSSType.identica:
+				ivAvatar.setImageResource(R.drawable.ic_launcher_identica);
+				break;
+			default:
+				ivAvatar.setImageResource(R.drawable.ic_launcher_custom);
 				break;
 			}
     	}

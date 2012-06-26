@@ -6,7 +6,9 @@ import java.util.List;
 import mad3.muxie.app.R;
 import mad3.muxie.feed.RSS;
 import mad3.muxie.feed.RSSBlogger;
+import mad3.muxie.feed.RSSCustom;
 import mad3.muxie.feed.RSSFacebook;
+import mad3.muxie.feed.RSSIdentica;
 import mad3.muxie.feed.RSSTwitter;
 import mad3.muxie.feed.RSSType;
 import mad3.muxie.feed.RSSWordpress;
@@ -96,9 +98,6 @@ public class PostListActivity extends FullActivity {
 			uid = rssCursor.getString(rssCursor.getColumnIndex(TableRss.UID));
 			
 			switch (type) {
-			case RSSType.blogger:
-				tvTitle.setBackgroundResource(R.drawable.blogger_header);
-				break;
 			case RSSType.twitter:
 				tvTitle.setBackgroundResource(R.drawable.twitter_header);
 				break;
@@ -107,6 +106,12 @@ public class PostListActivity extends FullActivity {
 				break;
 			case RSSType.wordpress:
 				tvTitle.setBackgroundResource(R.drawable.wordpress_header);
+				break;
+			case RSSType.identica:
+				tvTitle.setBackgroundResource(R.drawable.identica_header);
+				break;
+			default:
+				tvTitle.setBackgroundResource(R.drawable.blogger_header);
 				break;
 			}
 			rssCursor.close();
@@ -188,9 +193,17 @@ public class PostListActivity extends FullActivity {
 	
 	private void scanForUrl(int position) {
 		RSSItem item = items.get(position);
-		final List<String> urls = UrlUtils.extractUrl(item.getDescription());
+		final List<String> urls = null;
+		switch (type) {
+		case RSSType.facebook:
+			UrlUtils.extractUrl(item.getDescription());
+			break;
+		default:
+			UrlUtils.extractUrl(item.getTitle());
+			break;
+		}
 		
-		int size = urls.size();
+		int size = (urls != null ? urls.size() : 0);
 		// Workaround for remove unwanted url
 		for (int i = 0; i < size; i++) {
 			String s = urls.get(i);
@@ -235,16 +248,10 @@ public class PostListActivity extends FullActivity {
 		values.put("rss_id", id);
 		String content = "";
 		switch (type) {
-		case RSSType.blogger:
-			content = item.getTitle();
-			break;
-		case RSSType.twitter:
-			content = item.getDescription();
-			break;
 		case RSSType.facebook:
 			content = Html.fromHtml(item.getDescription()).toString();
 			break;
-		case RSSType.wordpress:
+		default: // for whom the bell tolls (for whom that use just the title)
 			content = item.getTitle();
 			break;
 		}
@@ -262,7 +269,6 @@ public class PostListActivity extends FullActivity {
 		try {
 			switch (type) {
 			case RSSType.blogger:
-				// comentatios: http://www.mad3linux.org/feeds/4278447403727088782/comments/default?alt=rss
 				rss = new RSSBlogger();
 				break;
 			case RSSType.twitter:
@@ -273,6 +279,12 @@ public class PostListActivity extends FullActivity {
 				break;
 			case RSSType.wordpress:
 				rss = new RSSWordpress();
+				break;
+			case RSSType.identica:
+				rss = new RSSIdentica();
+				break;
+			case RSSType.custom:
+				rss = new RSSCustom();
 				break;
 			default:
 				hasErrors = true;
@@ -287,8 +299,14 @@ public class PostListActivity extends FullActivity {
 			error = new Exception(getResources().getString(R.string.err_network_access));
 		} catch (RSSReaderException e) {
 			Log.e("PostListActivity", e.getMessage(), e);
-			hasErrors = true;
-			error = e;
+			if ("Bad Request".equals(e.getMessage())) {
+				hasErrors = true;
+				error = new Exception(getResources().getString(R.string.err_request_limit));
+			} else {
+				hasErrors = true;
+				error = e;
+			}
+			
 		} catch (Exception e) {
 			Log.e("PostListActivity", e.getMessage(), e);
 			hasErrors = true;
@@ -299,20 +317,13 @@ public class PostListActivity extends FullActivity {
 	private void loadFeed() {
 		if (validate(null)) {
 			tvTitle.setText(title);
-			switch (type) {
-			case RSSType.blogger:
-				adapter = new BasePostListAdapter(this, RSSType.blogger);
-				break;
-			case RSSType.twitter:
+			
+			if (type == RSSType.twitter || type == RSSType.identica) {
 				adapter = new TwitterPostListAdapter(this);
-				break;
-			case RSSType.facebook:
-				adapter = new BasePostListAdapter(this, RSSType.facebook);
-				break;
-			case RSSType.wordpress:
-				adapter = new BasePostListAdapter(this, RSSType.wordpress);
-				break;
+			} else {
+				adapter = new BasePostListAdapter(this, type);
 			}
+			
 			adapter.notifyDataSetChanged();
 			lvList.setAdapter(adapter);
 			// reload the rss
@@ -376,13 +387,10 @@ public class PostListActivity extends FullActivity {
 	    
 	    private void populate(RSSItem item, BasePostListHolder holder) {
 	    	switch (type) {
-			case RSSType.blogger:
-				holder.tvBaseTitle.setText(item.getTitle());
-				break;
 			case RSSType.facebook:
 				holder.tvBaseTitle.setText(Html.fromHtml(item.getDescription()));
 				break;
-			case RSSType.wordpress:
+			default:
 				holder.tvBaseTitle.setText(item.getTitle());
 				break;
 			}
@@ -450,7 +458,7 @@ public class PostListActivity extends FullActivity {
 			}
 			
 			RSSItem item = items.get(position);
-			String[] array = ParseTweet.extractUser(item.getDescription());
+			String[] array = ParseTweet.extractUser(item.getTitle());
 			if (array != null) {
 				holder.tvTwitterTitle.setText(Html.fromHtml(array[1]));
 				holder.tvTwitterUser.setText(array[0]);

@@ -25,4 +25,9 @@
         Você não possui favoritos ainda.\n\nPara adicionar favoritos apenas pressione um post
         ou um tweet e selecione Adicionar aos favoritos.
     </string>
+    <string name="err_request_limit">Limite de requisições excedido. Tente outra vez mais tarde.</string>
+    <string-array name="favorites_options">
+        <item>Visualizar</item>
+        <item>Procurar por URL</item>
+    </string-array>
 </resources>

@@ -28,5 +28,9 @@
         You don\'t have favorites yet.\n\nTo add favorites just press a post or a tweet and select
     	Add to favorites.
     </string>
-
+	 <string name="err_request_limit">Requests limit exceeded. Try again later.</string>
+	 <string-array name="favorites_options">
+        <item>View</item>
+        <item>Scan for URL</item>
+    </string-array>
 </resources>
