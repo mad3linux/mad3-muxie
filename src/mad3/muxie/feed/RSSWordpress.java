@@ -5,7 +5,7 @@ public class RSSWordpress extends RSS {
 	@Override
 	protected String toUri(String uid) {
 		if (uid != null) {
-			return "http://" + uid + ".wordpress.com/?feed=rss2";
+			return "http://" + uid + "/?feed=rss2";
 		}
 		return null;
 	}
