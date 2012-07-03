@@ -4,7 +4,7 @@
     <string name="sql_create_tb_rss">        <![CDATA[
       CREATE TABLE rss (
 		   _id INTEGER PRIMARY KEY AUTOINCREMENT,
-		   name TEXT NOT NULL UNIQUE,
+		   name TEXT NOT NULL,
 		   uid TEXT NOT NULL,
 		   type INTEGER NOT NULL DEFAULT 1
 		);]]>

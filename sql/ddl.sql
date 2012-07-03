@@ -4,7 +4,7 @@
 
 CREATE TABLE rss (
    _id INTEGER PRIMARY KEY AUTOINCREMENT,
-   name TEXT NOT NULL UNIQUE,
+   name TEXT NOT NULL,
    uid TEXT NOT NULL,
    type INTEGER NOT NULL DEFAULT 1 -- 1: blogger, 2: twitter, 3: facebook, 4: wordpress, 5: identica, 99: custom
 );
