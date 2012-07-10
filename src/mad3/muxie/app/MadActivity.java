@@ -1,6 +1,5 @@
 package mad3.muxie.app;
 
-import mad3.muxie.app.R;
 import mad3.muxie.feed.RSSType;
 import mad3.muxie.table.TableRss;
 import mad3.muxie.view.FavoritesActivity;
