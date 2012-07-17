@@ -193,15 +193,7 @@ public class PostListActivity extends FullActivity {
 	
 	private void scanForUrl(int position) {
 		RSSItem item = items.get(position);
-		final List<String> urls = null;
-		switch (type) {
-		case RSSType.facebook:
-			UrlUtils.extractUrl(item.getDescription());
-			break;
-		default:
-			UrlUtils.extractUrl(item.getTitle());
-			break;
-		}
+		final List<String> urls = UrlUtils.extractUrl(item.getDescription());
 		
 		int size = (urls != null ? urls.size() : 0);
 		// Workaround for remove unwanted url
